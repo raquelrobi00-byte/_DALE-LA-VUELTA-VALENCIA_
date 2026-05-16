@@ -1,0 +1,663 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>App — Dale la Vuelta Valencia</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
+<style>
+  :root {
+    --verde: #1D5C3A;
+    --verde2: #2E7D52;
+    --verde-claro: #4A9B6F;
+    --verde-palo: #D4EDDA;
+    --naranja: #E07A2F;
+    --naranja-claro: #F5A623;
+    --rojo: #C0392B;
+    --rojo-claro: #FFEBEE;
+    --fondo: #F0F7F2;
+    --gris: #2D2D2A;
+    --gris2: #5A5A56;
+    --gris3: #9A9A95;
+    --blanco: #FFFFFF;
+    --borde: #E0EDE6;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: #1a1a2e;
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 2rem;
+  }
+  .device-wrap {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1.5rem;
+  }
+  .device-label {
+    color: rgba(255,255,255,0.5);
+    font-size: 0.8rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+  /* Carcasa del móvil */
+  .phone {
+    width: 375px;
+    background: #111;
+    border-radius: 50px;
+    padding: 14px;
+    box-shadow: 0 40px 100px rgba(0,0,0,0.6), inset 0 1px 0 rgba(255,255,255,0.1);
+    position: relative;
+  }
+  .phone-notch {
+    width: 120px; height: 28px;
+    background: #111;
+    border-radius: 0 0 20px 20px;
+    position: absolute;
+    top: 14px; left: 50%; transform: translateX(-50%);
+    z-index: 10;
+    display: flex; align-items: center; justify-content: center; gap: 8px;
+  }
+  .notch-dot { width: 8px; height: 8px; border-radius: 50%; background: #222; }
+  .notch-bar { width: 50px; height: 4px; border-radius: 2px; background: #333; }
+  .phone-screen {
+    background: var(--fondo);
+    border-radius: 38px;
+    overflow: hidden;
+    height: 720px;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+  }
+
+  /* PANTALLAS */
+  .screen { display: none; flex-direction: column; height: 100%; animation: fadeIn 0.25s ease; }
+  .screen.active { display: flex; }
+  @keyframes fadeIn { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
+
+  /* STATUS BAR */
+  .status-bar {
+    background: var(--verde);
+    padding: 36px 20px 10px;
+    display: flex; justify-content: space-between; align-items: center;
+    color: rgba(255,255,255,0.9); font-size: 0.75rem;
+  }
+  .status-time { font-weight: 600; font-size: 0.8rem; }
+  .status-icons { display: flex; gap: 4px; align-items: center; }
+  .s-icon { font-size: 0.75rem; }
+
+  /* HEADER APP */
+  .app-header {
+    background: var(--verde);
+    padding: 0 20px 20px;
+    color: white;
+  }
+  .app-header-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
+  .app-title { font-size: 1.1rem; font-weight: 700; }
+  .app-subtitle { font-size: 0.8rem; opacity: 0.7; }
+  .header-avatar {
+    width: 36px; height: 36px; border-radius: 50%;
+    background: rgba(255,255,255,0.2); display: flex;
+    align-items: center; justify-content: center;
+    font-size: 0.8rem; font-weight: 600;
+  }
+
+  /* SCROLL CONTENT */
+  .scroll-content {
+    flex: 1; overflow-y: auto; padding: 16px;
+    display: flex; flex-direction: column; gap: 12px;
+  }
+  .scroll-content::-webkit-scrollbar { width: 3px; }
+  .scroll-content::-webkit-scrollbar-thumb { background: var(--borde); border-radius: 2px; }
+
+  /* CARDS */
+  .card { background: white; border-radius: 16px; padding: 14px 16px; border: 1px solid var(--borde); }
+  .card-title { font-size: 0.7rem; color: var(--gris3); font-weight: 600; letter-spacing: 0.07em; text-transform: uppercase; margin-bottom: 6px; }
+  .card-value { font-size: 1rem; font-weight: 600; color: var(--gris); }
+  .card-sub { font-size: 0.8rem; color: var(--gris2); margin-top: 2px; }
+
+  /* ALERTA */
+  .alerta { background: #FFF3E0; border-left: 4px solid var(--naranja); border-radius: 12px; padding: 12px 14px; }
+  .alerta-titulo { font-size: 0.8rem; font-weight: 700; color: #8B4513; margin-bottom: 3px; }
+  .alerta-texto { font-size: 0.76rem; color: #6B4B2A; line-height: 1.4; }
+
+  /* RUTAS */
+  .ruta-item {
+    background: white; border-radius: 14px; padding: 14px;
+    border: 1px solid var(--borde); display: flex;
+    justify-content: space-between; align-items: center;
+    cursor: pointer; transition: all 0.15s;
+    gap: 12px;
+  }
+  .ruta-item:hover { background: var(--verde-palo); border-color: var(--verde-claro); transform: translateX(3px); }
+  .ruta-dot { width: 10px; height: 10px; border-radius: 50%; background: var(--verde); flex-shrink: 0; }
+  .ruta-dot.naranja { background: var(--naranja); }
+  .ruta-info { flex: 1; }
+  .ruta-nombre { font-size: 0.9rem; font-weight: 600; color: var(--gris); }
+  .ruta-meta { font-size: 0.76rem; color: var(--gris2); margin-top: 2px; }
+  .ruta-badge {
+    background: var(--verde-palo); color: var(--verde);
+    font-size: 0.7rem; font-weight: 600; padding: 4px 10px;
+    border-radius: 20px; flex-shrink: 0;
+  }
+  .ruta-badge.peligro { background: #FFF3E0; color: var(--naranja); }
+
+  /* IMPACTO */
+  .impacto-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+  .impacto-item {
+    background: white; border-radius: 14px; padding: 14px;
+    border: 1px solid var(--borde); text-align: center;
+  }
+  .impacto-emoji { font-size: 1.6rem; margin-bottom: 4px; }
+  .impacto-num { font-size: 1.3rem; font-weight: 700; color: var(--verde); line-height: 1; }
+  .impacto-label { font-size: 0.72rem; color: var(--gris2); margin-top: 2px; }
+
+  /* REPORTAR */
+  .reporte-lista { display: flex; flex-direction: column; gap: 8px; }
+  .reporte-item {
+    background: white; border-radius: 12px; padding: 12px 14px;
+    border: 1px solid var(--borde); display: flex; align-items: center; gap: 12px;
+    cursor: pointer; transition: all 0.15s;
+  }
+  .reporte-item:hover { border-color: var(--naranja); background: #FFFAF6; }
+  .reporte-icon { font-size: 1.4rem; flex-shrink: 0; }
+  .reporte-nombre { font-size: 0.88rem; font-weight: 600; color: var(--gris); }
+  .reporte-desc { font-size: 0.75rem; color: var(--gris2); }
+
+  /* MAPA SCREEN */
+  .mapa-container { flex: 1; background: #d4edda; position: relative; overflow: hidden; }
+  .mapa-svg-wrap { width: 100%; height: 100%; }
+  .mapa-overlay {
+    position: absolute; bottom: 16px; left: 16px; right: 16px;
+    background: white; border-radius: 16px; padding: 14px;
+    box-shadow: 0 8px 30px rgba(0,0,0,0.12);
+  }
+  .mapa-ruta-activa { font-size: 0.9rem; font-weight: 600; color: var(--gris); }
+  .mapa-ruta-meta { font-size: 0.8rem; color: var(--gris2); margin: 4px 0 10px; }
+  .mapa-btn {
+    background: var(--verde); color: white; border: none; border-radius: 12px;
+    width: 100%; padding: 12px; font-size: 0.9rem; font-weight: 600;
+    cursor: pointer; transition: background 0.2s;
+  }
+  .mapa-btn:hover { background: var(--verde2); }
+
+  /* BOTTOM NAV */
+  .bottom-nav {
+    background: white; border-top: 1px solid var(--borde);
+    display: flex; padding: 10px 0 20px; /* extra por notch bottom */
+  }
+  .nav-item {
+    flex: 1; display: flex; flex-direction: column; align-items: center;
+    gap: 3px; cursor: pointer; padding: 4px 0; transition: all 0.15s;
+    border: none; background: none;
+  }
+  .nav-icon { font-size: 1.3rem; }
+  .nav-label { font-size: 0.62rem; font-weight: 500; color: var(--gris3); }
+  .nav-item.active .nav-label { color: var(--verde); }
+  .nav-item.active .nav-icon { transform: translateY(-2px); }
+  .nav-dot { width: 4px; height: 4px; border-radius: 50%; background: var(--verde); margin-top: 2px; }
+
+  /* SECCIÓN HEADER */
+  .section-header { padding: 16px 20px 8px; background: var(--fondo); }
+  .section-title { font-size: 1.1rem; font-weight: 700; color: var(--gris); }
+  .section-sub { font-size: 0.8rem; color: var(--gris2); margin-top: 2px; }
+
+  /* ALERTAS LISTADO */
+  .alerta-item {
+    background: white; border-radius: 14px; padding: 13px 14px;
+    border: 1px solid var(--borde); border-left: 4px solid var(--rojo);
+    display: flex; gap: 10px; align-items: flex-start;
+  }
+  .alerta-item.warning { border-left-color: var(--naranja); }
+  .alerta-item.info { border-left-color: var(--verde-claro); }
+  .alerta-emo { font-size: 1.2rem; flex-shrink: 0; }
+  .alerta-body-title { font-size: 0.85rem; font-weight: 600; color: var(--gris); }
+  .alerta-body-text { font-size: 0.75rem; color: var(--gris2); line-height: 1.4; margin-top: 2px; }
+
+  /* SLIDER CO2 */
+  input[type=range] {
+    width: 100%; accent-color: var(--verde);
+    height: 4px; border-radius: 2px; cursor: pointer;
+  }
+  .co2-display {
+    background: var(--verde-palo); border-radius: 12px; padding: 12px 16px;
+    display: flex; justify-content: space-between; align-items: center;
+  }
+  .co2-num { font-size: 1.5rem; font-weight: 700; color: var(--verde); }
+  .co2-label { font-size: 0.8rem; color: var(--verde-claro); }
+
+  /* ONBOARDING/SPLASH */
+  .splash {
+    background: var(--verde); flex: 1;
+    display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+    padding: 2rem; text-align: center; gap: 1.5rem;
+  }
+  .splash-logo { font-size: 5rem; }
+  .splash-title { font-size: 1.8rem; font-weight: 700; color: white; line-height: 1.2; }
+  .splash-sub { font-size: 0.9rem; color: rgba(255,255,255,0.7); }
+  .splash-btn {
+    background: white; color: var(--verde); border: none;
+    padding: 14px 32px; border-radius: 30px; font-size: 1rem;
+    font-weight: 700; cursor: pointer; transition: all 0.2s;
+  }
+  .splash-btn:hover { transform: scale(1.03); }
+</style>
+</head>
+<body>
+
+<div class="device-wrap">
+  <div class="device-label">Prototipo APP — Dale la Vuelta Valencia</div>
+  <div class="phone">
+    <div class="phone-notch">
+      <div class="notch-dot"></div>
+      <div class="notch-bar"></div>
+      <div class="notch-dot"></div>
+    </div>
+    <div class="phone-screen">
+
+      <!-- PANTALLA SPLASH -->
+      <div class="screen active" id="screen-splash" style="display:flex">
+        <div class="splash">
+          <div class="splash-logo">🚲</div>
+          <div class="splash-title">Dale la Vuelta<br>Valencia</div>
+          <div class="splash-sub">Movilidad segura y sostenible en el área norte metropolitana</div>
+          <button class="splash-btn" onclick="ir('inicio')">Empezar →</button>
+        </div>
+      </div>
+
+      <!-- PANTALLA INICIO -->
+      <div class="screen" id="screen-inicio">
+        <div class="status-bar">
+          <span class="status-time">9:41</span>
+          <div class="status-icons">
+            <span class="s-icon">●●●</span>
+            <span class="s-icon">WiFi</span>
+            <span class="s-icon">🔋</span>
+          </div>
+        </div>
+        <div class="app-header">
+          <div class="app-header-top">
+            <div>
+              <div class="app-title">Buenos días 👋</div>
+              <div class="app-subtitle">Moncada – Valencia · Miércoles</div>
+            </div>
+            <div class="header-avatar">RR</div>
+          </div>
+        </div>
+        <div class="scroll-content">
+          <div class="alerta">
+            <div class="alerta-titulo">⚠️ Punto de riesgo activo</div>
+            <div class="alerta-texto">Desvío Carpesa (CV-315): tramo de alta siniestralidad. Precaución extrema. Accidente mortal registrado dic. 2025.</div>
+          </div>
+          <div class="card">
+            <div class="card-title">Ruta más rápida hoy</div>
+            <div class="card-value">Moncada → Valencia</div>
+            <div class="card-sub">11,4 km · 38 min · ✅ Ruta segura disponible</div>
+          </div>
+          <div class="card-title" style="padding-left:4px">Rutas recomendadas</div>
+          <div class="ruta-item" onclick="ir('mapa')">
+            <div class="ruta-dot"></div>
+            <div class="ruta-info">
+              <div class="ruta-nombre">Moncada → Valencia (Centro)</div>
+              <div class="ruta-meta">11,4 km · Evita CV-315 tramo peligroso</div>
+            </div>
+            <div class="ruta-badge">Segura</div>
+          </div>
+          <div class="ruta-item" onclick="ir('mapa')">
+            <div class="ruta-dot naranja"></div>
+            <div class="ruta-info">
+              <div class="ruta-nombre">Alfara → Borbotó → Valencia</div>
+              <div class="ruta-meta">8,7 km · Pasa por huerta valenciana</div>
+            </div>
+            <div class="ruta-badge">Popular</div>
+          </div>
+          <div class="ruta-item" onclick="ir('mapa')">
+            <div class="ruta-dot naranja"></div>
+            <div class="ruta-info">
+              <div class="ruta-nombre">Circular Huerta Nord</div>
+              <div class="ruta-meta">14,2 km · Ruta recreativa con paradas</div>
+            </div>
+            <div class="ruta-badge peligro">⚠ 1 zona</div>
+          </div>
+          <div class="card-title" style="padding-left:4px">Tu impacto esta semana</div>
+          <div class="impacto-grid">
+            <div class="impacto-item">
+              <div class="impacto-emoji">🌿</div>
+              <div class="impacto-num">2.4 kg</div>
+              <div class="impacto-label">CO₂ ahorrado</div>
+            </div>
+            <div class="impacto-item">
+              <div class="impacto-emoji">🔥</div>
+              <div class="impacto-num">1.240</div>
+              <div class="impacto-label">Calorías quemadas</div>
+            </div>
+            <div class="impacto-item">
+              <div class="impacto-emoji">📍</div>
+              <div class="impacto-num">34 km</div>
+              <div class="impacto-label">Recorridos en bici</div>
+            </div>
+            <div class="impacto-item">
+              <div class="impacto-emoji">⏱</div>
+              <div class="impacto-num">2h 18m</div>
+              <div class="impacto-label">Tiempo activo</div>
+            </div>
+          </div>
+        </div>
+        <div class="bottom-nav">
+          <button class="nav-item active" onclick="irNav('inicio')">
+            <span class="nav-icon">🏠</span>
+            <span class="nav-label">Inicio</span>
+            <div class="nav-dot"></div>
+          </button>
+          <button class="nav-item" onclick="irNav('mapa')">
+            <span class="nav-icon">🗺️</span>
+            <span class="nav-label">Mapa</span>
+          </button>
+          <button class="nav-item" onclick="irNav('alertas')">
+            <span class="nav-icon">🔔</span>
+            <span class="nav-label">Alertas</span>
+          </button>
+          <button class="nav-item" onclick="irNav('reportar')">
+            <span class="nav-icon">📷</span>
+            <span class="nav-label">Reportar</span>
+          </button>
+          <button class="nav-item" onclick="irNav('impacto')">
+            <span class="nav-icon">🌿</span>
+            <span class="nav-label">Impacto</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- PANTALLA MAPA -->
+      <div class="screen" id="screen-mapa">
+        <div class="status-bar">
+          <span class="status-time">9:41</span>
+          <div class="status-icons"><span class="s-icon">●●●</span><span class="s-icon">🔋</span></div>
+        </div>
+        <div class="mapa-container">
+          <svg viewBox="0 0 347 500" width="100%" height="100%" style="display:block">
+            <!-- Fondo verde huerta -->
+            <rect width="347" height="500" fill="#c8e6c9"/>
+            <!-- Zonas urbanas -->
+            <rect x="40" y="30" width="90" height="70" rx="6" fill="#e8f5e9" stroke="#a5d6a7" stroke-width="0.5"/>
+            <rect x="120" y="140" width="70" height="55" rx="6" fill="#e8f5e9" stroke="#a5d6a7" stroke-width="0.5"/>
+            <rect x="180" y="350" width="130" height="120" rx="8" fill="#bbdefb" stroke="#90caf9" stroke-width="0.5"/>
+            <!-- CV-315 (carretera) -->
+            <path d="M 85 30 L 100 80 L 140 150 L 165 220 L 195 310 L 220 380 L 245 440" fill="none" stroke="#bdbdbd" stroke-width="8" stroke-linecap="round"/>
+            <path d="M 85 30 L 100 80 L 140 150 L 165 220 L 195 310 L 220 380 L 245 440" fill="none" stroke="#eeeeee" stroke-width="3" stroke-linecap="round" stroke-dasharray="8 5"/>
+            <!-- Carril bici propuesto -->
+            <path d="M 70 35 C 82 75 118 155 145 225 S 178 318 205 388 S 230 442 252 455" fill="none" stroke="#2e7d52" stroke-width="3.5" stroke-linecap="round" stroke-dasharray="10 6"/>
+            <!-- Pin MONCADA -->
+            <circle cx="85" cy="65" r="18" fill="#1d5c3a" opacity="0.15"/>
+            <circle cx="85" cy="65" r="11" fill="#1d5c3a"/>
+            <text x="85" y="62" text-anchor="middle" font-size="10" fill="white" font-weight="700" font-family="DM Sans, sans-serif">M</text>
+            <text x="85" y="100" text-anchor="middle" font-size="9" fill="#1d5c3a" font-weight="600" font-family="DM Sans, sans-serif">MONCADA</text>
+            <!-- Pin ALFARA -->
+            <circle cx="155" cy="165" r="9" fill="#4a9b6f"/>
+            <text x="155" y="163" text-anchor="middle" font-size="8" fill="white" font-weight="700" font-family="DM Sans, sans-serif">A</text>
+            <text x="185" y="158" text-anchor="start" font-size="8.5" fill="#1d5c3a" font-weight="600" font-family="DM Sans, sans-serif">Alfara</text>
+            <!-- Pin CARPESA (peligro) -->
+            <circle cx="195" cy="290" r="12" fill="#e07a2f"/>
+            <text x="195" y="287" text-anchor="middle" font-size="11" fill="white" font-weight="700" font-family="DM Sans, sans-serif">!</text>
+            <text x="215" y="285" text-anchor="start" font-size="8" fill="#8b4513" font-weight="600" font-family="DM Sans, sans-serif">Carpesa</text>
+            <text x="215" y="295" text-anchor="start" font-size="7" fill="#a0522d" font-family="DM Sans, sans-serif">⚠ Accidente 31/12/25</text>
+            <!-- Pin VALENCIA -->
+            <circle cx="245" cy="415" r="16" fill="#1565c0" opacity="0.15"/>
+            <circle cx="245" cy="415" r="10" fill="#1565c0"/>
+            <text x="245" y="412" text-anchor="middle" font-size="9" fill="white" font-weight="700" font-family="DM Sans, sans-serif">V</text>
+            <text x="245" y="435" text-anchor="middle" font-size="9" fill="#1565c0" font-weight="600" font-family="DM Sans, sans-serif">VALENCIA</text>
+            <!-- Pedanías intermedias -->
+            <circle cx="135" cy="250" r="6" fill="#9fe1cb" stroke="#1d9e75"/>
+            <text x="148" y="253" font-size="7.5" fill="#1d5c3a" font-family="DM Sans, sans-serif">Borbotó</text>
+            <circle cx="180" cy="340" r="6" fill="#9fe1cb" stroke="#1d9e75"/>
+            <text x="193" y="343" font-size="7.5" fill="#1d5c3a" font-family="DM Sans, sans-serif">Masarrochos</text>
+            <!-- Leyenda -->
+            <rect x="10" y="440" width="130" height="55" rx="6" fill="white" opacity="0.9"/>
+            <line x1="18" y1="453" x2="40" y2="453" stroke="#bdbdbd" stroke-width="3"/>
+            <text x="44" y="456" font-size="7" fill="#5a5a56" font-family="DM Sans, sans-serif">CV-315</text>
+            <line x1="18" y1="466" x2="40" y2="466" stroke="#2e7d52" stroke-width="2.5" stroke-dasharray="6 3"/>
+            <text x="44" y="469" font-size="7" fill="#5a5a56" font-family="DM Sans, sans-serif">Carril bici propuesto</text>
+            <circle cx="24" cy="482" r="4" fill="#e07a2f"/>
+            <text x="44" y="485" font-size="7" fill="#5a5a56" font-family="DM Sans, sans-serif">Punto de riesgo</text>
+          </svg>
+          <div class="mapa-overlay">
+            <div class="mapa-ruta-activa">🚲 Ruta activa: Moncada → Valencia</div>
+            <div class="mapa-ruta-meta">11,4 km · ~38 min · Evita zona peligrosa Carpesa</div>
+            <button class="mapa-btn" onclick="alert('Navegación iniciada — 38 min estimados')">Iniciar navegación</button>
+          </div>
+        </div>
+        <div class="bottom-nav">
+          <button class="nav-item" onclick="irNav('inicio')"><span class="nav-icon">🏠</span><span class="nav-label">Inicio</span></button>
+          <button class="nav-item active" onclick="irNav('mapa')"><span class="nav-icon">🗺️</span><span class="nav-label">Mapa</span><div class="nav-dot"></div></button>
+          <button class="nav-item" onclick="irNav('alertas')"><span class="nav-icon">🔔</span><span class="nav-label">Alertas</span></button>
+          <button class="nav-item" onclick="irNav('reportar')"><span class="nav-icon">📷</span><span class="nav-label">Reportar</span></button>
+          <button class="nav-item" onclick="irNav('impacto')"><span class="nav-icon">🌿</span><span class="nav-label">Impacto</span></button>
+        </div>
+      </div>
+
+      <!-- PANTALLA ALERTAS -->
+      <div class="screen" id="screen-alertas">
+        <div class="status-bar"><span class="status-time">9:41</span><div class="status-icons"><span class="s-icon">🔋</span></div></div>
+        <div class="section-header">
+          <div class="section-title">🔔 Alertas de seguridad</div>
+          <div class="section-sub">Zona norte metropolitana de Valencia</div>
+        </div>
+        <div class="scroll-content">
+          <div class="alerta-item">
+            <div class="alerta-emo">🚨</div>
+            <div>
+              <div class="alerta-body-title">Punto negro: Desvío Carpesa</div>
+              <div class="alerta-body-text">CV-315 km 3.2 — Accidente mortal registrado 31 dic. 2025. Motorista 22 años. Precaución máxima. Sin carril bici segregado.</div>
+            </div>
+          </div>
+          <div class="alerta-item warning">
+            <div class="alerta-emo">⚠️</div>
+            <div>
+              <div class="alerta-body-title">Intersección peligrosa: Acceso IES Moncada</div>
+              <div class="alerta-body-text">Cruce sin señalización ciclista. Alta intensidad de tráfico en horario escolar (7:30-9:00h).</div>
+            </div>
+          </div>
+          <div class="alerta-item warning">
+            <div class="alerta-emo">🏗️</div>
+            <div>
+              <div class="alerta-body-title">Obras en CV-315 km 1.8</div>
+              <div class="alerta-body-text">Carril estrechado. Reduce velocidad y extrema precaución. Vigente hasta el 30 mayo 2026.</div>
+            </div>
+          </div>
+          <div class="alerta-item info">
+            <div class="alerta-emo">ℹ️</div>
+            <div>
+              <div class="alerta-body-title">Tráfico elevado — Hora punta</div>
+              <div class="alerta-body-text">Lun-Vie 7:00-9:30h y 17:00-19:30h: intensidad máxima en toda la CV-315. Se recomienda ruta alternativa por huerta.</div>
+            </div>
+          </div>
+          <div class="alerta-item info">
+            <div class="alerta-emo">🚲</div>
+            <div>
+              <div class="alerta-body-title">Nuevo punto de bicicletas compartidas</div>
+              <div class="alerta-body-text">Disponible nueva estación Valenbisi en Masarrochos. Intermodalidad con línea de bus 63.</div>
+            </div>
+          </div>
+        </div>
+        <div class="bottom-nav">
+          <button class="nav-item" onclick="irNav('inicio')"><span class="nav-icon">🏠</span><span class="nav-label">Inicio</span></button>
+          <button class="nav-item" onclick="irNav('mapa')"><span class="nav-icon">🗺️</span><span class="nav-label">Mapa</span></button>
+          <button class="nav-item active" onclick="irNav('alertas')"><span class="nav-icon">🔔</span><span class="nav-label">Alertas</span><div class="nav-dot"></div></button>
+          <button class="nav-item" onclick="irNav('reportar')"><span class="nav-icon">📷</span><span class="nav-label">Reportar</span></button>
+          <button class="nav-item" onclick="irNav('impacto')"><span class="nav-icon">🌿</span><span class="nav-label">Impacto</span></button>
+        </div>
+      </div>
+
+      <!-- PANTALLA REPORTAR -->
+      <div class="screen" id="screen-reportar">
+        <div class="status-bar"><span class="status-time">9:41</span><div class="status-icons"><span class="s-icon">🔋</span></div></div>
+        <div class="section-header">
+          <div class="section-title">📷 Reportar incidencia</div>
+          <div class="section-sub">Tu reporte mejora la seguridad de todos</div>
+        </div>
+        <div class="scroll-content">
+          <div class="card">
+            <div class="card-title">Ubicación detectada</div>
+            <div class="card-value">📍 CV-315, Moncada</div>
+            <div class="card-sub">Precisa tu ubicación si es necesario</div>
+          </div>
+          <div class="card-title" style="padding-left:4px">¿Qué tipo de incidencia?</div>
+          <div class="reporte-lista">
+            <div class="reporte-item" onclick="this.style.borderColor='#e07a2f';this.style.background='#fffaf6'">
+              <div class="reporte-icon">🕳️</div>
+              <div>
+                <div class="reporte-nombre">Bache o pavimento dañado</div>
+                <div class="reporte-desc">Firme en mal estado, peligroso para ciclistas</div>
+              </div>
+            </div>
+            <div class="reporte-item" onclick="this.style.borderColor='#e07a2f';this.style.background='#fffaf6'">
+              <div class="reporte-icon">🚫</div>
+              <div>
+                <div class="reporte-nombre">Obstáculo en el carril</div>
+                <div class="reporte-desc">Vehículo, escombros u objeto bloqueando</div>
+              </div>
+            </div>
+            <div class="reporte-item" onclick="this.style.borderColor='#e07a2f';this.style.background='#fffaf6'">
+              <div class="reporte-icon">🚦</div>
+              <div>
+                <div class="reporte-nombre">Cruce peligroso</div>
+                <div class="reporte-desc">Intersección sin señalización ciclista</div>
+              </div>
+            </div>
+            <div class="reporte-item" onclick="this.style.borderColor='#e07a2f';this.style.background='#fffaf6'">
+              <div class="reporte-icon">🌑</div>
+              <div>
+                <div class="reporte-nombre">Falta de iluminación</div>
+                <div class="reporte-desc">Tramo oscuro, peligroso de noche</div>
+              </div>
+            </div>
+            <div class="reporte-item" onclick="this.style.borderColor='#e07a2f';this.style.background='#fffaf6'">
+              <div class="reporte-icon">⚠️</div>
+              <div>
+                <div class="reporte-nombre">Otro riesgo vial</div>
+                <div class="reporte-desc">Descríbelo en el siguiente paso</div>
+              </div>
+            </div>
+          </div>
+          <button style="background:var(--verde);color:white;border:none;border-radius:14px;width:100%;padding:14px;font-size:0.95rem;font-weight:600;cursor:pointer;margin-top:8px" onclick="alert('¡Gracias! Tu reporte ha sido enviado y ayuda a mejorar la seguridad de todos los ciclistas.')">Enviar reporte ↗</button>
+        </div>
+        <div class="bottom-nav">
+          <button class="nav-item" onclick="irNav('inicio')"><span class="nav-icon">🏠</span><span class="nav-label">Inicio</span></button>
+          <button class="nav-item" onclick="irNav('mapa')"><span class="nav-icon">🗺️</span><span class="nav-label">Mapa</span></button>
+          <button class="nav-item" onclick="irNav('alertas')"><span class="nav-icon">🔔</span><span class="nav-label">Alertas</span></button>
+          <button class="nav-item active" onclick="irNav('reportar')"><span class="nav-icon">📷</span><span class="nav-label">Reportar</span><div class="nav-dot"></div></button>
+          <button class="nav-item" onclick="irNav('impacto')"><span class="nav-icon">🌿</span><span class="nav-label">Impacto</span></button>
+        </div>
+      </div>
+
+      <!-- PANTALLA IMPACTO -->
+      <div class="screen" id="screen-impacto">
+        <div class="status-bar"><span class="status-time">9:41</span><div class="status-icons"><span class="s-icon">🔋</span></div></div>
+        <div class="section-header">
+          <div class="section-title">🌿 Tu impacto ambiental</div>
+          <div class="section-sub">Cada kilómetro en bici cuenta</div>
+        </div>
+        <div class="scroll-content">
+          <div class="impacto-grid">
+            <div class="impacto-item">
+              <div class="impacto-emoji">🌿</div>
+              <div class="impacto-num" id="co2-display">2.4</div>
+              <div class="impacto-label">kg CO₂ ahorrado</div>
+            </div>
+            <div class="impacto-item">
+              <div class="impacto-emoji">🔥</div>
+              <div class="impacto-num">1.240</div>
+              <div class="impacto-label">kcal quemadas</div>
+            </div>
+            <div class="impacto-item">
+              <div class="impacto-emoji">📍</div>
+              <div class="impacto-num">34 km</div>
+              <div class="impacto-label">en bici esta semana</div>
+            </div>
+            <div class="impacto-item">
+              <div class="impacto-emoji">🚗</div>
+              <div class="impacto-num">34 km</div>
+              <div class="impacto-label">en coche evitados</div>
+            </div>
+          </div>
+          <div class="card">
+            <div class="card-title">Calcula tu CO₂ ahorrado</div>
+            <div style="margin-bottom:10px;font-size:0.85rem;color:var(--gris2)">¿Cuántos km harías en coche?</div>
+            <input type="range" min="1" max="50" value="10" id="km-slider" oninput="calcCO2(this.value)"/>
+            <div style="display:flex;justify-content:space-between;font-size:0.75rem;color:var(--gris3);margin:4px 0 10px">
+              <span>1 km</span><span id="km-label">10 km</span><span>50 km</span>
+            </div>
+            <div class="co2-display">
+              <div>
+                <div class="co2-label">CO₂ que NO emites</div>
+              </div>
+              <div class="co2-num" id="co2-calc">2.1 kg</div>
+            </div>
+          </div>
+          <div class="card">
+            <div class="card-title">Equivale a...</div>
+            <div style="display:flex;flex-direction:column;gap:8px;margin-top:4px">
+              <div style="display:flex;align-items:center;gap:10px;font-size:0.85rem;color:var(--gris)">
+                <span style="font-size:1.2rem">🌳</span>
+                <span id="arboles-text">Como plantar 0.1 árboles</span>
+              </div>
+              <div style="display:flex;align-items:center;gap:10px;font-size:0.85rem;color:var(--gris)">
+                <span style="font-size:1.2rem">💡</span>
+                <span id="luz-text">O tener una bombilla encendida 14 horas</span>
+              </div>
+            </div>
+          </div>
+          <div class="card">
+            <div class="card-title">Racha actual</div>
+            <div class="card-value">🔥 7 días consecutivos en bici</div>
+            <div class="card-sub">¡Sigue así! Estás transformando tu movilidad.</div>
+          </div>
+        </div>
+        <div class="bottom-nav">
+          <button class="nav-item" onclick="irNav('inicio')"><span class="nav-icon">🏠</span><span class="nav-label">Inicio</span></button>
+          <button class="nav-item" onclick="irNav('mapa')"><span class="nav-icon">🗺️</span><span class="nav-label">Mapa</span></button>
+          <button class="nav-item" onclick="irNav('alertas')"><span class="nav-icon">🔔</span><span class="nav-label">Alertas</span></button>
+          <button class="nav-item" onclick="irNav('reportar')"><span class="nav-icon">📷</span><span class="nav-label">Reportar</span></button>
+          <button class="nav-item active" onclick="irNav('impacto')"><span class="nav-icon">🌿</span><span class="nav-label">Impacto</span><div class="nav-dot"></div></button>
+        </div>
+      </div>
+
+    </div><!-- /phone-screen -->
+  </div><!-- /phone -->
+  <div class="device-label">Toca las pantallas para navegar entre secciones</div>
+</div>
+
+<script>
+function ir(pantalla) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  const target = document.getElementById('screen-' + pantalla);
+  if (target) target.classList.add('active');
+}
+function irNav(pantalla) {
+  ir(pantalla);
+  document.querySelectorAll('.nav-item').forEach(n => {
+    n.classList.remove('active');
+    const dot = n.querySelector('.nav-dot');
+    if (dot) dot.remove();
+  });
+  event.currentTarget.classList.add('active');
+  const dot = document.createElement('div');
+  dot.className = 'nav-dot';
+  event.currentTarget.appendChild(dot);
+}
+function calcCO2(km) {
+  const co2 = (km * 0.21).toFixed(1);
+  document.getElementById('km-label').textContent = km + ' km';
+  document.getElementById('co2-calc').textContent = co2 + ' kg';
+  document.getElementById('arboles-text').textContent = 'Como plantar ' + (co2 / 22).toFixed(2) + ' árboles';
+  document.getElementById('luz-text').textContent = 'O tener una bombilla encendida ' + Math.round(co2 * 6.7) + ' horas';
+}
+</script>
+</body>
+</html>

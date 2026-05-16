@@ -1,0 +1,561 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Dale la Vuelta Valencia — Movilidad Segura y Sostenible</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+<style>
+  :root {
+    --verde: #1D5C3A;
+    --verde-claro: #4A9B6F;
+    --verde-palo: #C8E6C9;
+    --naranja: #E07A2F;
+    --naranja-claro: #F5A623;
+    --crema: #F8F5EE;
+    --gris: #3D3D3A;
+    --gris-medio: #6B6B67;
+    --gris-claro: #E8E5DC;
+    --blanco: #FFFFFF;
+  }
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+  body { font-family: 'DM Sans', sans-serif; background: var(--crema); color: var(--gris); line-height: 1.7; }
+
+  /* NAV */
+  nav {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+    background: rgba(29,92,58,0.97); backdrop-filter: blur(8px);
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 0 2rem; height: 60px;
+  }
+  .nav-logo { display: flex; align-items: center; gap: 10px; color: white; text-decoration: none; }
+  .nav-logo-icon { width: 32px; height: 32px; }
+  .nav-logo-text { font-family: 'Playfair Display', serif; font-size: 1.1rem; font-weight: 700; }
+  .nav-links { display: flex; gap: 2rem; list-style: none; }
+  .nav-links a { color: rgba(255,255,255,0.85); text-decoration: none; font-size: 0.88rem; font-weight: 500; letter-spacing: 0.03em; transition: color 0.2s; }
+  .nav-links a:hover { color: var(--naranja-claro); }
+  .nav-cta { background: var(--naranja); color: white; padding: 8px 18px; border-radius: 6px; font-size: 0.85rem; font-weight: 600; text-decoration: none; transition: background 0.2s; }
+  .nav-cta:hover { background: #c56a22; }
+
+  /* HERO */
+  .hero {
+    min-height: 100vh; background: var(--verde);
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    text-align: center; padding: 80px 2rem 4rem; position: relative; overflow: hidden;
+  }
+  .hero::before {
+    content: ''; position: absolute; inset: 0;
+    background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='60' height='60'%3E%3Ccircle cx='30' cy='30' r='1.5' fill='%23ffffff' fill-opacity='0.06'/%3E%3C/svg%3E");
+  }
+  .hero-badge {
+    display: inline-block; background: var(--naranja); color: white;
+    font-size: 0.75rem; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase;
+    padding: 6px 16px; border-radius: 20px; margin-bottom: 1.5rem;
+  }
+  .hero h1 {
+    font-family: 'Playfair Display', serif; font-size: clamp(3rem, 9vw, 7rem);
+    font-weight: 900; color: white; line-height: 1;
+    margin-bottom: 0.3em;
+  }
+  .hero h1 span { color: var(--naranja-claro); }
+  .hero-sub {
+    font-size: clamp(1rem, 2.5vw, 1.4rem); color: rgba(255,255,255,0.75);
+    max-width: 600px; margin: 1rem auto 2.5rem;
+  }
+  .hero-ctas { display: flex; gap: 1rem; flex-wrap: wrap; justify-content: center; }
+  .btn-primary {
+    background: var(--naranja); color: white; padding: 14px 28px; border-radius: 8px;
+    font-weight: 600; font-size: 1rem; text-decoration: none; transition: all 0.2s;
+    border: 2px solid var(--naranja);
+  }
+  .btn-primary:hover { background: #c56a22; border-color: #c56a22; transform: translateY(-2px); }
+  .btn-outline {
+    background: transparent; color: white; padding: 14px 28px; border-radius: 8px;
+    font-weight: 600; font-size: 1rem; text-decoration: none; transition: all 0.2s;
+    border: 2px solid rgba(255,255,255,0.4);
+  }
+  .btn-outline:hover { border-color: white; background: rgba(255,255,255,0.08); transform: translateY(-2px); }
+
+  .hero-stats {
+    display: flex; gap: 3rem; margin-top: 4rem; flex-wrap: wrap; justify-content: center;
+  }
+  .hero-stat { text-align: center; }
+  .hero-stat-num { font-family: 'Playfair Display', serif; font-size: 2.5rem; color: var(--naranja-claro); font-weight: 700; }
+  .hero-stat-label { font-size: 0.82rem; color: rgba(255,255,255,0.6); letter-spacing: 0.05em; text-transform: uppercase; }
+
+  /* SECCIONES */
+  section { padding: 5rem 2rem; }
+  .container { max-width: 1100px; margin: 0 auto; }
+  .section-tag {
+    display: inline-block; font-size: 0.72rem; font-weight: 600; letter-spacing: 0.12em;
+    text-transform: uppercase; color: var(--naranja); margin-bottom: 0.8rem;
+  }
+  h2 { font-family: 'Playfair Display', serif; font-size: clamp(2rem, 4vw, 3rem); font-weight: 700; color: var(--verde); line-height: 1.2; margin-bottom: 1rem; }
+  .section-intro { font-size: 1.1rem; color: var(--gris-medio); max-width: 680px; margin-bottom: 3rem; }
+
+  /* ALERTA ACCIDENTALIDAD */
+  .alert-box {
+    background: #FFF3E0; border-left: 4px solid var(--naranja); border-radius: 8px;
+    padding: 1.5rem 2rem; margin: 3rem 0; display: flex; gap: 1.5rem; align-items: flex-start;
+  }
+  .alert-icon { font-size: 2rem; flex-shrink: 0; }
+  .alert-title { font-weight: 600; font-size: 1.05rem; color: var(--gris); margin-bottom: 0.4rem; }
+  .alert-text { font-size: 0.92rem; color: var(--gris-medio); line-height: 1.6; }
+
+  /* TARJETAS DE CARACTERÍSTICAS */
+  .cards-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1.5rem; }
+  .card {
+    background: white; border-radius: 12px; padding: 2rem;
+    border: 1px solid var(--gris-claro); transition: transform 0.2s, box-shadow 0.2s;
+  }
+  .card:hover { transform: translateY(-4px); box-shadow: 0 12px 40px rgba(29,92,58,0.1); }
+  .card-icon {
+    width: 52px; height: 52px; border-radius: 12px; background: var(--verde-palo);
+    display: flex; align-items: center; justify-content: center; margin-bottom: 1.2rem;
+    font-size: 1.5rem;
+  }
+  .card h3 { font-size: 1.1rem; font-weight: 600; color: var(--verde); margin-bottom: 0.6rem; }
+  .card p { font-size: 0.9rem; color: var(--gris-medio); line-height: 1.6; }
+
+  /* ACTIVIDADES */
+  .actividades { background: var(--verde); }
+  .actividades h2 { color: white; }
+  .actividades .section-tag { color: var(--naranja-claro); }
+  .actividades .section-intro { color: rgba(255,255,255,0.7); }
+  .act-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 2rem; }
+  .act-card {
+    background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.15);
+    border-radius: 12px; padding: 2rem; color: white;
+    transition: background 0.2s;
+  }
+  .act-card:hover { background: rgba(255,255,255,0.13); }
+  .act-num { font-family: 'Playfair Display', serif; font-size: 3rem; font-weight: 900; color: var(--naranja-claro); line-height: 1; margin-bottom: 0.5rem; opacity: 0.9; }
+  .act-card h3 { font-size: 1.2rem; font-weight: 600; margin-bottom: 0.8rem; }
+  .act-card p { font-size: 0.9rem; color: rgba(255,255,255,0.7); line-height: 1.6; }
+  .act-tags { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 1.2rem; }
+  .act-tag {
+    background: rgba(255,255,255,0.12); font-size: 0.75rem; padding: 4px 12px;
+    border-radius: 20px; color: rgba(255,255,255,0.85);
+  }
+
+  /* DATOS REALES */
+  .datos { background: white; }
+  .datos-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1px; background: var(--gris-claro); border-radius: 12px; overflow: hidden; }
+  .dato-item { background: white; padding: 2rem 1.5rem; text-align: center; }
+  .dato-num { font-family: 'Playfair Display', serif; font-size: 2.8rem; font-weight: 700; color: var(--naranja); line-height: 1; }
+  .dato-label { font-size: 0.85rem; color: var(--gris-medio); margin-top: 0.4rem; line-height: 1.4; }
+  .dato-fuente { font-size: 0.72rem; color: #aaa; margin-top: 0.3rem; }
+
+  /* APP SECTION */
+  .app-section { background: var(--crema); }
+  .app-inner { display: grid; grid-template-columns: 1fr 1fr; gap: 4rem; align-items: center; }
+  .app-phone {
+    background: var(--verde); border-radius: 32px; padding: 1rem;
+    box-shadow: 0 30px 80px rgba(29,92,58,0.25); max-width: 280px; margin: 0 auto;
+  }
+  .phone-screen { background: #f0faf5; border-radius: 24px; padding: 1.5rem 1rem; min-height: 440px; }
+  .phone-header { background: var(--verde); border-radius: 16px; padding: 1rem; color: white; margin-bottom: 1rem; }
+  .phone-header-title { font-size: 0.95rem; font-weight: 600; }
+  .phone-header-sub { font-size: 0.75rem; opacity: 0.7; }
+  .phone-card { background: white; border-radius: 12px; padding: 0.9rem; margin-bottom: 0.8rem; border: 1px solid #e0f2e9; }
+  .phone-card-label { font-size: 0.7rem; color: var(--verde-claro); font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; }
+  .phone-card-val { font-size: 0.95rem; font-weight: 500; color: var(--gris); margin-top: 2px; }
+  .phone-route { background: var(--verde-palo); border-radius: 10px; padding: 0.8rem; display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.8rem; }
+  .phone-route-name { font-size: 0.85rem; font-weight: 600; color: var(--verde); }
+  .phone-route-km { font-size: 0.8rem; color: var(--verde-claro); }
+  .phone-alert { background: #FFF3E0; border-left: 3px solid var(--naranja); border-radius: 8px; padding: 0.8rem; margin-bottom: 0.8rem; }
+  .phone-alert-text { font-size: 0.78rem; color: var(--gris); }
+  .phone-btn { background: var(--verde); color: white; border: none; border-radius: 10px; width: 100%; padding: 0.8rem; font-size: 0.9rem; font-weight: 600; cursor: pointer; text-align: center; }
+  .app-features h2 { margin-bottom: 1rem; }
+  .feature-list { list-style: none; }
+  .feature-list li { display: flex; align-items: flex-start; gap: 1rem; margin-bottom: 1.4rem; }
+  .feature-dot { width: 10px; height: 10px; border-radius: 50%; background: var(--naranja); flex-shrink: 0; margin-top: 7px; }
+  .feature-list h4 { font-size: 0.95rem; font-weight: 600; color: var(--gris); margin-bottom: 2px; }
+  .feature-list p { font-size: 0.85rem; color: var(--gris-medio); }
+  .app-download { display: flex; gap: 1rem; flex-wrap: wrap; margin-top: 2rem; }
+  .app-btn {
+    background: var(--gris); color: white; padding: 12px 20px; border-radius: 10px;
+    font-size: 0.85rem; font-weight: 500; text-decoration: none; display: flex;
+    align-items: center; gap: 8px; transition: background 0.2s;
+  }
+  .app-btn:hover { background: var(--verde); }
+  .app-btn span { font-size: 0.7rem; opacity: 0.7; display: block; }
+
+  /* MAPA LOCALIZACIÓN */
+  .mapa-section { background: white; }
+  .mapa-wrap { border-radius: 16px; overflow: hidden; border: 1px solid var(--gris-claro); }
+  .mapa-inner { background: linear-gradient(135deg, #d4edda 0%, #c3e6cb 40%, #a8d5b5 100%); padding: 3rem; min-height: 380px; position: relative; display: flex; align-items: center; justify-content: center; }
+  .mapa-placeholder { text-align: center; color: var(--verde); }
+  .mapa-placeholder p { font-size: 0.9rem; opacity: 0.7; margin-top: 0.5rem; }
+  .mapa-leyenda { padding: 1.5rem 2rem; background: white; display: flex; flex-wrap: wrap; gap: 1.5rem; }
+  .leyenda-item { display: flex; align-items: center; gap: 8px; font-size: 0.85rem; color: var(--gris-medio); }
+  .ley-dot { width: 12px; height: 12px; border-radius: 50%; flex-shrink: 0; }
+  .ley-line { width: 28px; height: 3px; border-radius: 2px; flex-shrink: 0; }
+
+  /* EQUIPO */
+  .equipo { background: var(--crema); }
+  .equipo-card { background: white; border-radius: 12px; padding: 2rem; max-width: 400px; border: 1px solid var(--gris-claro); }
+  .equipo-avatar { width: 64px; height: 64px; border-radius: 50%; background: var(--verde); display: flex; align-items: center; justify-content: center; color: white; font-family: 'Playfair Display', serif; font-size: 1.4rem; font-weight: 700; margin-bottom: 1rem; }
+  .equipo-name { font-size: 1.1rem; font-weight: 600; color: var(--gris); }
+  .equipo-role { font-size: 0.85rem; color: var(--verde-claro); font-weight: 500; margin-bottom: 0.3rem; }
+  .equipo-detail { font-size: 0.85rem; color: var(--gris-medio); }
+
+  /* FOOTER */
+  footer { background: var(--verde); color: rgba(255,255,255,0.75); padding: 3rem 2rem; text-align: center; }
+  footer .logo { font-family: 'Playfair Display', serif; font-size: 1.8rem; color: white; font-weight: 900; margin-bottom: 0.5rem; }
+  footer .logo span { color: var(--naranja-claro); }
+  footer p { font-size: 0.85rem; margin-bottom: 0.3rem; }
+  footer a { color: var(--verde-palo); text-decoration: none; }
+  footer a:hover { color: var(--naranja-claro); }
+  .footer-links { display: flex; justify-content: center; gap: 2rem; margin: 1.5rem 0; flex-wrap: wrap; }
+  .footer-sep { width: 60px; height: 2px; background: var(--naranja); margin: 1.5rem auto; border-radius: 2px; }
+
+  @media (max-width: 768px) {
+    .nav-links { display: none; }
+    .app-inner { grid-template-columns: 1fr; }
+    .hero h1 { font-size: 3rem; }
+    .hero-stats { gap: 1.5rem; }
+  }
+</style>
+</head>
+<body>
+
+<!-- NAVEGACIÓN -->
+<nav>
+  <a href="#inicio" class="nav-logo">
+    <svg class="nav-logo-icon" viewBox="0 0 32 32" fill="none">
+      <circle cx="16" cy="16" r="15" stroke="#4A9B6F" stroke-width="1.5"/>
+      <circle cx="16" cy="16" r="6" fill="none" stroke="white" stroke-width="1.5"/>
+      <path d="M16 4 L16 10 M16 22 L16 28 M4 16 L10 16 M22 16 L28 16" stroke="#E07A2F" stroke-width="1.5" stroke-linecap="round"/>
+    </svg>
+    <span class="nav-logo-text">Dale la Vuelta Valencia</span>
+  </a>
+  <ul class="nav-links">
+    <li><a href="#proyecto">El proyecto</a></li>
+    <li><a href="#datos">Datos</a></li>
+    <li><a href="#actividades">Actividades</a></li>
+    <li><a href="#app">App</a></li>
+    <li><a href="#mapa">Mapa</a></li>
+  </ul>
+  <a href="#app" class="nav-cta">Descargar App</a>
+</nav>
+
+<!-- HERO -->
+<section class="hero" id="inicio">
+  <div class="hero-badge">FP Superior · Movilidad Segura y Sostenible · 2026</div>
+  <h1>Dale la <span>Vuelta</span><br>Valencia</h1>
+  <p class="hero-sub">Por una movilidad segura, sostenible y accesible en el área metropolitana norte de Valencia — Moncada, Alfara del Patriarca y l'Horta Nord</p>
+  <div class="hero-ctas">
+    <a href="#proyecto" class="btn-primary">Conoce el proyecto</a>
+    <a href="#app" class="btn-outline">Descargar la app</a>
+  </div>
+  <div class="hero-stats">
+    <div class="hero-stat">
+      <div class="hero-stat-num">12 km</div>
+      <div class="hero-stat-label">Carril bici propuesto</div>
+    </div>
+    <div class="hero-stat">
+      <div class="hero-stat-num">40.000+</div>
+      <div class="hero-stat-label">Personas beneficiadas</div>
+    </div>
+    <div class="hero-stat">
+      <div class="hero-stat-num">2</div>
+      <div class="hero-stat-label">Actividades diseñadas</div>
+    </div>
+    <div class="hero-stat">
+      <div class="hero-stat-num">0</div>
+      <div class="hero-stat-label">Objetivo de víctimas</div>
+    </div>
+  </div>
+</section>
+
+<!-- EL PROYECTO -->
+<section id="proyecto">
+  <div class="container">
+    <span class="section-tag">Naturaleza del proyecto</span>
+    <h2>Un corredor sin carril bici.<br>Una comunidad sin alternativa real.</h2>
+    <p class="section-intro">La CV-315 conecta Moncada, Alfara del Patriarca y las pedanías de l'Horta Nord con Valencia cada día. 15.000 vehículos al día. Cero kilómetros de carril bici segregado. Este proyecto existe para cambiar eso.</p>
+
+    <div class="alert-box">
+      <div class="alert-icon">⚠️</div>
+      <div>
+        <div class="alert-title">Accidente mortal en la CV-315 — 31 de diciembre de 2025</div>
+        <div class="alert-text">Un joven motorista de 22 años perdió la vida en el desvío hacia Carpesa. Un menor de 12 años fue hospitalizado por politraumatismo. Este siniestro, confirmado por el CICU de la Comunitat Valenciana, ilustra con dureza el riesgo real de una vía que soporta 15.000 vehículos diarios sin ninguna protección para usuarios vulnerables.</div>
+      </div>
+    </div>
+
+    <div class="cards-grid">
+      <div class="card">
+        <div class="card-icon">🚲</div>
+        <h3>Infraestructura ciclista</h3>
+        <p>Propuesta de 12 km de carril bici segregado con iluminación solar, zonas de descanso y conexión con transporte público entre Moncada y Valencia.</p>
+      </div>
+      <div class="card">
+        <div class="card-icon">🎓</div>
+        <h3>Educación vial</h3>
+        <p>Talleres y actividades en centros educativos de Moncada y Alfara del Patriarca, orientados a transformar los hábitos de movilidad desde edades tempranas.</p>
+      </div>
+      <div class="card">
+        <div class="card-icon">📱</div>
+        <h3>App + Web</h3>
+        <p>Herramienta digital gratuita para consultar rutas seguras, reportar incidencias, ver puntos de interés y registrar el impacto ambiental de cada desplazamiento.</p>
+      </div>
+      <div class="card">
+        <div class="card-icon">🌿</div>
+        <h3>Huerta valenciana</h3>
+        <p>El proyecto respeta e integra el entorno natural de la huerta, promoviendo un modelo de movilidad compatible con la conservación de este espacio cultural único.</p>
+      </div>
+      <div class="card">
+        <div class="card-icon">♿</div>
+        <h3>Accesibilidad universal</h3>
+        <p>Diseño inclusivo: itinerarios adaptados para personas con movilidad reducida, personas mayores y familias con menores.</p>
+      </div>
+      <div class="card">
+        <div class="card-icon">🤝</div>
+        <h3>Colaboración institucional</h3>
+        <p>Respaldado por los Ayuntamientos de Moncada, Alfara del Patriarca y Valencia, el CIPFP Canastell y la Generalitat Valenciana.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- DATOS REALES -->
+<section id="datos" class="datos">
+  <div class="container">
+    <span class="section-tag">Datos reales de accidentalidad</span>
+    <h2>Los números que justifican este proyecto</h2>
+    <p class="section-intro">No hablamos de percepciones. Estos son los datos oficiales de la DGT, el CICU y el Ministerio del Interior que fundamentan la urgencia de actuar.</p>
+    <div class="datos-grid">
+      <div class="dato-item">
+        <div class="dato-num">15.000</div>
+        <div class="dato-label">Vehículos diarios en la CV-315</div>
+        <div class="dato-fuente">Diputación de Valencia</div>
+      </div>
+      <div class="dato-item">
+        <div class="dato-num">+22</div>
+        <div class="dato-label">Fallecidos más en la C. Valenciana en 2024 vs 2023</div>
+        <div class="dato-fuente">Ministerio del Interior, ene. 2025</div>
+      </div>
+      <div class="dato-item">
+        <div class="dato-num">45%</div>
+        <div class="dato-label">De víctimas mortales son usuarios vulnerables (ciclistas, peatones, motoristas)</div>
+        <div class="dato-fuente">DGT, 1er trimestre 2026</div>
+      </div>
+      <div class="dato-item">
+        <div class="dato-num">58%</div>
+        <div class="dato-label">De ciclistas fallecidos mueren entre las 7:00 y las 14:00 h — horario escolar y laboral</div>
+        <div class="dato-fuente">DGT, Informe ciclistas 2023</div>
+      </div>
+      <div class="dato-item">
+        <div class="dato-num">78,6%</div>
+        <div class="dato-label">De accidentes mortales ocurren en vías convencionales como la CV-315</div>
+        <div class="dato-fuente">RACC, balance 2024</div>
+      </div>
+      <div class="dato-item">
+        <div class="dato-num">+11,1%</div>
+        <div class="dato-label">Incremento de siniestralidad en la C. Valenciana desde 2019</div>
+        <div class="dato-fuente">RACC, balance 2024</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ACTIVIDADES -->
+<section id="actividades" class="actividades">
+  <div class="container">
+    <span class="section-tag">Metodología · Actividades</span>
+    <h2>Dos actividades diseñadas para cambiar hábitos</h2>
+    <p class="section-intro">Aprende haciendo. Nuestras actividades llevan la educación vial a la calle, al aula y al entorno real de la CV-315.</p>
+    <div class="act-grid">
+      <div class="act-card">
+        <div class="act-num">01</div>
+        <h3>Breakout BikeBorbotó</h3>
+        <p>Una dinámica de escape room educativo donde los participantes resuelven enigmas relacionados con movilidad segura, señales de tráfico y seguridad ciclista usando mapas reales de la CV-315 y su entorno. Trabajo cooperativo en grupos de 4-5 personas.</p>
+        <div class="act-tags">
+          <span class="act-tag">Gamificación</span>
+          <span class="act-tag">Aprendizaje experiencial</span>
+          <span class="act-tag">Secundaria y Bachillerato</span>
+          <span class="act-tag">Entorno controlado</span>
+        </div>
+      </div>
+      <div class="act-card">
+        <div class="act-num">02</div>
+        <h3>Sabudets Vial</h3>
+        <p>Ruta guiada en bicicleta por los itinerarios reales de Moncada, Alfara del Patriarca y las pedanías del norte de Valencia. Los participantes identifican puntos conflictivos, analizan la infraestructura existente y proponen mejoras concretas con fichas de observación técnica.</p>
+        <div class="act-tags">
+          <span class="act-tag">Ruta real</span>
+          <span class="act-tag">Observación directa</span>
+          <span class="act-tag">Con medidas de seguridad</span>
+          <span class="act-tag">Jóvenes y adultos</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- APP MÓVIL -->
+<section id="app" class="app-section">
+  <div class="container">
+    <div class="app-inner">
+      <div class="app-features">
+        <span class="section-tag">Herramienta digital</span>
+        <h2>La app que necesita tu barrio</h2>
+        <p class="section-intro" style="margin-bottom:2rem">Gratuita. Para iOS y Android. Pensada para las personas que usan la bici o quieren empezar a usarla en el área norte de Valencia.</p>
+        <ul class="feature-list">
+          <li>
+            <div class="feature-dot"></div>
+            <div>
+              <h4>Mapa de rutas seguras</h4>
+              <p>Itinerarios recomendados entre Moncada, Alfara, pedanías y Valencia, con señalización de tramos de riesgo.</p>
+            </div>
+          </li>
+          <li>
+            <div class="feature-dot"></div>
+            <div>
+              <h4>Reporte de incidencias</h4>
+              <p>¿Hay un bache peligroso? ¿Un cruce sin señalizar? Repórtalo en tiempo real y colabora en mantener el mapa actualizado.</p>
+            </div>
+          </li>
+          <li>
+            <div class="feature-dot"></div>
+            <div>
+              <h4>Contador de impacto</h4>
+              <p>Registra tus desplazamientos en bici y descubre cuántos kg de CO₂ no has emitido y las calorías que has quemado.</p>
+            </div>
+          </li>
+          <li>
+            <div class="feature-dot"></div>
+            <div>
+              <h4>Alertas de seguridad</h4>
+              <p>Notificaciones en los tramos de mayor siniestralidad registrada, especialmente en los accesos a la CV-315.</p>
+            </div>
+          </li>
+        </ul>
+        <div class="app-download">
+          <a href="#" class="app-btn">
+            🍎 <div><span>Disponible en</span>App Store</div>
+          </a>
+          <a href="#" class="app-btn">
+            🤖 <div><span>Disponible en</span>Google Play</div>
+          </a>
+        </div>
+      </div>
+      <div>
+        <div class="app-phone">
+          <div class="phone-screen">
+            <div class="phone-header">
+              <div class="phone-header-title">Dale la Vuelta Valencia 🚲</div>
+              <div class="phone-header-sub">Buenos días, ciclista</div>
+            </div>
+            <div class="phone-alert">
+              <div class="phone-alert-text">⚠️ Precaución en desvío Carpesa (CV-315). Tramo de alta siniestralidad.</div>
+            </div>
+            <div style="font-size:0.78rem;color:#666;font-weight:600;letter-spacing:0.05em;text-transform:uppercase;margin-bottom:0.5rem">Rutas recomendadas</div>
+            <div class="phone-route">
+              <div>
+                <div class="phone-route-name">Moncada → Valencia</div>
+                <div class="phone-route-km">11,4 km · 38 min estimados</div>
+              </div>
+              <span style="font-size:1.2rem">→</span>
+            </div>
+            <div class="phone-route">
+              <div>
+                <div class="phone-route-name">Alfara → Borbotó</div>
+                <div class="phone-route-km">4,2 km · 15 min estimados</div>
+              </div>
+              <span style="font-size:1.2rem">→</span>
+            </div>
+            <div class="phone-card">
+              <div class="phone-card-label">Tu impacto esta semana</div>
+              <div class="phone-card-val">🌿 2,4 kg CO₂ ahorrados</div>
+            </div>
+            <div class="phone-card">
+              <div class="phone-card-label">Incidencias reportadas</div>
+              <div class="phone-card-val">📍 3 puntos nuevos en tu zona</div>
+            </div>
+            <div class="phone-btn">Iniciar ruta</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- MAPA -->
+<section id="mapa" class="mapa-section">
+  <div class="container">
+    <span class="section-tag">Localización</span>
+    <h2>El territorio del proyecto</h2>
+    <p class="section-intro">El corredor CV-315 conecta el área metropolitana norte de Valencia. Aquí viven más de 40.000 personas que merecen una alternativa segura al coche.</p>
+    <div class="mapa-wrap">
+      <div class="mapa-inner">
+        <div class="mapa-placeholder">
+          <svg width="80" height="80" viewBox="0 0 80 80" fill="none">
+            <circle cx="40" cy="40" r="38" stroke="#1D5C3A" stroke-width="2" opacity="0.4"/>
+            <path d="M40 15 L40 65 M15 40 L65 40" stroke="#1D5C3A" stroke-width="1.5" stroke-linecap="round" opacity="0.4"/>
+            <circle cx="40" cy="25" r="6" fill="#1D5C3A" opacity="0.7"/>
+            <circle cx="40" cy="40" r="5" fill="#4A9B6F" opacity="0.7"/>
+            <circle cx="52" cy="50" r="4" fill="#E07A2F" opacity="0.8"/>
+            <circle cx="60" cy="62" r="8" fill="#185FA5" opacity="0.5"/>
+            <path d="M40 31 L40 35 M40 45 L52 46" stroke="#1D5C3A" stroke-width="2" stroke-dasharray="4 2" opacity="0.5"/>
+          </svg>
+          <p>Ver mapa interactivo completo en la sección 7 del proyecto</p>
+        </div>
+      </div>
+      <div class="mapa-leyenda">
+        <div class="leyenda-item"><div class="ley-dot" style="background:#1D5C3A"></div>Moncada</div>
+        <div class="leyenda-item"><div class="ley-dot" style="background:#4A9B6F"></div>Alfara del Patriarca</div>
+        <div class="leyenda-item"><div class="ley-dot" style="background:#9FE1CB"></div>Pedanías l'Horta Nord</div>
+        <div class="leyenda-item"><div class="ley-dot" style="background:#185FA5"></div>Valencia ciudad</div>
+        <div class="leyenda-item"><div class="ley-line" style="background:#888; background: repeating-linear-gradient(to right, #888 0, #888 6px, transparent 6px, transparent 10px)"></div>CV-315</div>
+        <div class="leyenda-item"><div class="ley-line" style="background: repeating-linear-gradient(to right, #1D9E75 0, #1D9E75 8px, transparent 8px, transparent 13px)"></div>Carril bici propuesto</div>
+        <div class="leyenda-item"><div class="ley-dot" style="background:#E07A2F"></div>Accidente mortal dic. 2025</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- EQUIPO -->
+<section class="equipo">
+  <div class="container">
+    <span class="section-tag">El proyecto</span>
+    <h2>Quién hay detrás</h2>
+    <p class="section-intro" style="margin-bottom:2rem">Un proyecto de formación profesional con impacto real en el territorio.</p>
+    <div style="display:flex;gap:1.5rem;flex-wrap:wrap;">
+      <div class="equipo-card">
+        <div class="equipo-avatar">RR</div>
+        <div class="equipo-name">Raquel Robi Ros</div>
+        <div class="equipo-role">Autora del proyecto</div>
+        <div class="equipo-detail">FP Superior · Formación para la Movilidad Segura y Sostenible</div>
+        <div class="equipo-detail" style="margin-top:4px">CIPFP Canastell · raqrobros@alu.edu.gva.es</div>
+      </div>
+      <div class="equipo-card">
+        <div class="equipo-avatar">RZ</div>
+        <div class="equipo-name">Ramón Zamora Pérez</div>
+        <div class="equipo-role">Tutor del proyecto</div>
+        <div class="equipo-detail">CIPFP Canastell · Sant Vicent del Raspeig</div>
+        <div class="equipo-detail" style="margin-top:4px">Generalitat Valenciana · Conselleria d'Educació</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="logo">Dale la <span>Vuelta</span> Valencia</div>
+  <p>Por una movilidad segura, sostenible y accesible</p>
+  <div class="footer-sep"></div>
+  <div class="footer-links">
+    <a href="#proyecto">El proyecto</a>
+    <a href="#datos">Datos</a>
+    <a href="#actividades">Actividades</a>
+    <a href="#app">App</a>
+    <a href="#mapa">Mapa</a>
+  </div>
+  <p style="font-size:0.8rem;opacity:0.5">FP Superior Formación para la Movilidad Segura y Sostenible · CIPFP Canastell · 2026</p>
+  <p style="font-size:0.78rem;opacity:0.4;margin-top:0.5rem">Proyecto académico sin fines comerciales · Raquel Robi Ros</p>
+</footer>
+
+</body>
+</html>
